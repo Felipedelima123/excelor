@@ -31,3 +31,6 @@ go.work
 *.launch
 .settings/
 *.sublime-workspace
+
+# Files
+tmp_files/*.xlsx

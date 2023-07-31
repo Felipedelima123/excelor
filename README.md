@@ -9,6 +9,70 @@ Excelor aims to be a simple API to generate Excel, from anywhere. Powered by [Gi
 - Standalone app;
 - Can be a binary to distribute to your servers and run locally.
 
+## How to use
+In the moment the api is in an embryonic stage, so there is only one endpoint. 
+
+HTTP POST -> /generate-excel
+```JSON
+{
+	"columns": [
+		"Name",
+		"Age",
+		"Role"
+	],
+	"rows": [
+		[
+			"José",
+			"31",
+			"Admin"
+		],
+		[
+			"Lucia",
+			"32",
+			"Manager"
+		],
+		[
+			"Pedro",
+			"32",
+			"Developer"
+		]
+	],
+	"sheetName": "A Cool Name"
+}
+```
+
+CURL Code:
+```SHELL
+curl --request POST \
+  --url http://localhost:8080/generate-excel \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"columns": [
+		"Name",
+		"Age",
+		"Role"
+	],
+	"rows": [
+		[
+			"José",
+			"31",
+			"Admin"
+		],
+		[
+			"Lucia",
+			"32",
+			"Manager"
+		],
+		[
+			"Pedro",
+			"32",
+			"Developer"
+		]
+	],
+	"sheetName": "A Cool Name"
+}'
+```
+
 ## TODO
 - Everything :D
 
