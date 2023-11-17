@@ -2,16 +2,15 @@ package services
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/Felipedelima123/excelor/dtos"
 	"github.com/google/uuid"
 	"github.com/xuri/excelize/v2"
 )
 
-func GenerateExcel(payload dtos.GenerateExcelDto) {
+func GenerateExcel(payload dtos.GenerateExcelDto) (dtos.ExcelUrlDTO, error) {
 	f := excelize.NewFile()
-
-	fmt.Println(payload.SheetName != "Sheet1")
 
 	if payload.SheetName != "Sheet1" {
 		f.NewSheet(payload.SheetName)
@@ -21,7 +20,7 @@ func GenerateExcel(payload dtos.GenerateExcelDto) {
 	streamWriter, err := f.NewStreamWriter(payload.SheetName)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return dtos.ExcelUrlDTO{}, err
 	}
 
 	header := []interface{}{}
@@ -43,12 +42,29 @@ func GenerateExcel(payload dtos.GenerateExcelDto) {
 
 	if err := streamWriter.Flush(); err != nil {
 		fmt.Println(err)
-		return
+		return dtos.ExcelUrlDTO{}, err
 	}
 
-	if err := f.SaveAs("tmp_files/" + uuid.New().String() + ".xlsx"); err != nil {
+	filename := uuid.New().String() + ".xlsx"
+
+	if err := f.SaveAs("tmp_files/" + filename); err != nil {
 		fmt.Println(err)
-		return
+		return dtos.ExcelUrlDTO{}, err
 	}
+
+	bucketName := os.Getenv("BUCKET_NAME")
+
+	UploadToBucket(bucketName, filename)
+
+	fmt.Println("Excel generated successfully!")
+
+	url := GetSignedUrl(bucketName, filename)
+
+	fmt.Println(url)
+
+	return dtos.ExcelUrlDTO{
+		Url:      url,
+		Filename: filename,
+	}, nil
 
 }

@@ -14,7 +14,12 @@ func GenerateExcel(c *gin.Context) {
 
 	c.BindJSON(&payload)
 
-	services.GenerateExcel(payload)
+	url, err := services.GenerateExcel(payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error while generating excel",
+		})
+	}
 
-	c.JSON(http.StatusOK, payload)
+	c.JSON(http.StatusOK, url)
 }
